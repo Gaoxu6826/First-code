@@ -1,0 +1,197 @@
+package function;
+
+import java.io.*;
+import java.util.*;
+import org.openqa.selenium.By;
+//import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+
+public class NewWindow {
+
+	public String SelectListUserName = "//a[@class='Header_nav'][text()='Hua Xia ']";
+	public String SelectItemChangeAvailability = "//td[@id='ItemMiddle'][text()='Change Availability']";
+	public String FlagSwitchToOperator_HUAXIA = "//span[@class='dataLabelLeftStyle'][text()='Operator: HUAXIA']";
+	public String InputUnavailableFrom = "//input[@id='cal$PoperatorPage$ppyUnavailablePeriod$l1$ppyUnavailableFromField']";
+	public String InputUntil = "//input[@id='cal$PoperatorPage$ppyUnavailablePeriod$l1$ppyUnavailableToField']";
+	public String SelectListAssigneetype = "//select[@id='substitutetype']";
+	public String InputDecisionTree = "//input[@class='autocomplete_input']";
+	public String InputDefaulttoAssignee = "//input[@id='assigneeWB']";
+	public String SelectListActive = "//select[@id='pyOpAvailable']";
+	public String ButtonSubmit = "//button[@value='Submit']";
+	public String FlagOperatorUpdate = "//span[text()='Operator Update']";
+	//public String TextUpdateSuccess = "//td[@style='padding:10px']";
+	public String FlagError = "//td[@class='errorTitle']";
+	public String TextError = "//pre[@class='errorText']";
+	
+    public boolean isElementExist(WebDriver driver, By locator) {  
+        boolean flag1 = false;  
+        try {  
+            WebElement element=driver.findElement(locator);  
+            flag1=null!=element;  //if(element!=null) 
+            flag1=true;
+        } catch (NoSuchElementException e) {  
+            System.out.println("Element:" + locator.toString() + " is not exist!");  
+            flag1 = false;
+        }  
+        return flag1;  
+    }  
+	
+	
+	public void switchToOperatorPage(WebDriver driver) throws Exception {
+				
+		//select 'Hua Xia' drop-down box and select 'Change Availability' item
+		By SLUN = By.xpath(SelectListUserName);  
+	    if(isElementExist(driver,SLUN)){
+	    	
+	    	driver.findElement(By.xpath(SelectListUserName)).click();
+	    	Thread.sleep(5000);
+	    	By SICA = By.xpath(SelectItemChangeAvailability);  
+	    	if(isElementExist(driver,SICA)){
+	    		driver.findElement(By.xpath(SelectItemChangeAvailability)).click();
+	    		Thread.sleep(5000);
+	    		System.out.println("Select list and select item success------pass");
+	    	
+	    	}else{
+	    		System.out.println("Select 'Change Availability' item failure------fail");
+	    	}			
+	    }else{
+	    	System.out.println("Select 'Hua Xia' drop-down box failure------fail"); 
+	    }
+		
+		
+		//switch to new window,verify new window and operate
+		Thread.sleep(10000);	
+		Set<String> winHandels = driver.getWindowHandles(); // 得到当前窗口的set集合
+	    List<String> it = new ArrayList<String>(winHandels);// 将set集合存入list对象
+	    driver.switchTo().window(it.get(1)); 				// 切换到弹出的新窗口
+	    Thread.sleep(1000);
+	    //String url=driver.getCurrentUrl(); 				//获取新窗口的url
+	    
+	    
+	    String NewWindowTitle = driver.getTitle();			//获取新窗口的title	    
+	    By FSTO = By.xpath(FlagSwitchToOperator_HUAXIA);
+	    if(isElementExist(driver,FSTO)){
+	    	System.out.println("Switch to Window:'"+NewWindowTitle+"' successfully------pass.");	  
+		    boolean flag2;  
+	    	try{
+			    //input time from calendar
+			    By IUF = By.xpath(InputUnavailableFrom);
+			    By IU = By.xpath(InputUntil);
+				if(isElementExist(driver,IUF)){
+				    driver.findElement(By.xpath(InputUnavailableFrom)).sendKeys("3/1/2018");
+				    Thread.sleep(5000);
+				    System.out.println("Input 'Unavailable From' Success.");
+				}else{
+				    System.out.println("Input 'Unavailable From' Fail.");
+				}
+				if(isElementExist(driver,IU)){
+				    driver.findElement(By.xpath(InputUntil)).sendKeys("3/5/2018");
+				    Thread.sleep(5000);
+				    System.out.println("Input 'Until' Success.");
+				}else{
+				    System.out.println("Input 'Until' Fail.");
+				}
+			    	
+				//Select Assignee type
+				By SA = By.xpath(SelectListAssigneetype);
+				if(isElementExist(driver,SA)){
+				    WebElement Assigneetype = driver.findElement(By.xpath(SelectListAssigneetype));
+				    Select userSelect = new Select(Assigneetype);
+	//		  		userSelect.selectByVisibleText("Operator"); 
+				    userSelect.selectByVisibleText("Workbasket"); 
+				    Thread.sleep(3000);
+				    System.out.println("Select 'Assignee type' Success.");
+				 }else{
+				    System.out.println("Select 'Assignee type' Fail.");
+				 }
+				    
+				 //Input 'Lookup in Decision Tree'
+				By IDT = By.xpath(InputDecisionTree);
+				if(isElementExist(driver,IDT)){
+				    driver.findElement(By.xpath(InputDecisionTree)).sendKeys("123");
+				    Thread.sleep(3000);
+				    System.out.println("Input 'Lookup in Decision Tree' Success.");
+				}else{
+				    System.out.println("Input 'Lookup in Decision Tree' Fail.");
+				}
+				    
+				//Input 'Default to assignee'
+				By IDA = By.xpath(InputDefaulttoAssignee);
+				if(isElementExist(driver,IDA)){
+					driver.findElement(By.xpath(InputDefaulttoAssignee)).sendKeys("456");
+					Thread.sleep(3000);
+					System.out.println("Input 'Default to assignee' Success.");
+				}else{
+				    System.out.println("Input 'Default to assignee' Fail.");
+				}
+				   
+			    //select 'Active?'
+				By SLA = By.xpath(SelectListActive);
+				if(isElementExist(driver,SLA)){
+				    WebElement Active = driver.findElement(By.xpath(SelectListActive));
+				    Select myselect = new Select(Active);
+				    myselect.selectByValue("true");
+		//			myselect.selectByValue("false");
+				    Thread.sleep(3000);
+					System.out.println("Select 'Active:Yes' Success.");
+		//			System.out.println("Select 'Active:No' Success.");
+				}else{
+				    System.out.println("Select 'Active' Fail.");
+				}
+				flag2 = true;
+	    	}catch(Exception e){
+	    		flag2 = false;
+	    		System.out.println("Input Details in '"+NewWindowTitle+"' Fail------fail.");  	    		
+	    	}
+	    	
+	    	//Submit Details
+	    	if(flag2){
+	    		System.out.println("Input Details in '"+NewWindowTitle+"' Success------pass.");
+	  
+	    		By BS = By.xpath(ButtonSubmit);
+			    if(isElementExist(driver,BS)){
+			    	driver.findElement(By.xpath(ButtonSubmit)).click();
+			    	Thread.sleep(10000);
+			    	
+			    try{
+			    	int L1 = driver.findElements(By.xpath(FlagOperatorUpdate)).size();
+			    	int L2 = driver.findElements(By.xpath(FlagError)).size();			  
+			    	
+			    	if(L1 >0 || L2 >0){
+			    		System.out.println("Submit Details Success-------pass.");			    	
+				    	if(L1 >0){
+				    		System.out.println("Operator Update Success------pass");
+				    		System.out.println("Operator Update:You have successfully updated this Operator's availability information.");
+				    	}else if(L2 >0){
+				    		System.out.println("Operator Update Error------pass");
+				    		By TE = By.xpath(TextError);
+						    isElementExist(driver,TE);
+						    WebElement ErrorText = driver.findElement(By.xpath(TextError));
+						    System.out.println("Error: "+ErrorText.getText());					
+						}else{
+						    System.out.println("No return valid information back.");
+						}
+			    	}
+
+			    }catch(Exception e){
+			    	System.out.println("Try Submit Details Fail------fail.");
+			    }
+			    	
+			    }else{
+			    	System.out.println("Click Submit Button Fail------fail.");
+			    }
+	    	}else{
+	    		System.out.println("Input Details in '"+NewWindowTitle+"' Fail------fail.");  	
+	    	}
+		    
+	    }else{
+	    	System.out.println("Switch to Window:'"+NewWindowTitle+"' Fail------fail.");
+	    }
+	  driver.close();
+	  driver.switchTo().window(it.get(0)); 				// 返回至原页面
+	    
+	}
+}
