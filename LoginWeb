@@ -1,0 +1,90 @@
+package function;
+
+import java.io.*;
+import java.util.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+/*
+ 		WebElement selector = driver.findElement(By.id(wd.SelectList));
+		Select myselect = new Select(selector);
+		myselect.selectByVisibleText("Change Availability");
+		
+		Select userSelect=new Select(driver.findElement(By.id("User_user_type")));  
+    	userSelect.selectByVisibleText("Advertiser");  
+select标签才可以用此方法 */
+	
+public class QuickQuery {
+	
+	public String FrameUserID = "//input[@id='txtUserID']";
+	public String FramePassword = "//input[@id='txtPassword']";
+	public String SubmitButton = "//button[@id='sub']";
+	public String FlagLoginSuccess = "//span[text()='Login Success']";
+	public String FlagLoginError = "//span[@id='errorId']";
+
+	public void Login(WebDriver driver,String txtUserID,String txtPassword) throws Exception {
+		
+		WebElement name_box = driver.findElement(By.xpath(FrameUserID));
+		if(name_box!=null){
+			driver.findElement(By.xpath(FrameUserID)).clear();
+			driver.findElement(By.xpath(FrameUserID)).sendKeys(txtUserID);
+		}else{
+			System.out.println("Page Anomaly!");
+		}
+	
+		WebElement password_box = driver.findElement(By.xpath(FramePassword));
+		if(password_box!=null){
+			driver.findElement(By.xpath(FramePassword)).clear();
+			driver.findElement(By.xpath(FramePassword)).sendKeys(txtPassword);
+		}else{
+			System.out.println("Page Anomaly!");
+		}
+	
+		WebElement login_box = driver.findElement(By.xpath(SubmitButton));
+		if(login_box!=null){
+			driver.findElement(By.xpath(SubmitButton)).click();
+		}else{
+			System.out.println("Page Anomaly!");
+		}		
+		Thread.sleep(20000);
+				
+		int correct_check = driver.findElements(By.xpath(FlagLoginSuccess)).size();
+		int incorrect_check = driver.findElements(By.xpath(FlagLoginError)).size();	
+
+		if(correct_check > 0 ){
+			String Element_1 = driver.findElement(By.xpath(FlagLoginSuccess)).getText();
+			if(Element_1.equals("Login Success")){//login success
+				System.out.println("Login success------pass");
+			}else{
+				System.out.println("Login expection------fail");
+				driver.quit();
+			}
+		}else if(incorrect_check > 0 ){
+			String Element_2 = driver.findElement(By.xpath(FlagLoginError)).getText();			
+			if(Element_2.equals("The information you entered was not recognized.")){  
+				if(txtPassword==null || txtPassword.length()==0){
+					System.out.println("Password is entered as null.");
+				    System.out.println("Login failure------pass"); 					
+				}else{
+					System.out.println("The information you entered was not recognized.");
+				    System.out.println("Login failure------pass"); 
+				}
+			}
+			else{
+				System.out.println("Login exception------fail");
+				driver.quit();
+			}
+		}else{
+			if(txtUserID==null || txtUserID.length()==0){
+				System.out.println("User ID is entered as null.");
+			    System.out.println("Login failure------pass"); 				
+			}else{
+				System.out.println("Login expection------fail");
+				driver.close();
+			}
+		}	
+	}
+	
+}
